@@ -1,0 +1,10 @@
+-- Insert dummy cart data for testing
+INSERT INTO carts (cart_id, user_phone, user_email, cart_token, line_items, status, call_sent, created_at, updated_at) VALUES
+('cart_001', '+1234567890', 'john@example.com', 'token_001', '[{"id": "item_1", "quantity": 2, "variant_id": "var_1", "product_id": "prod_1"}]', 'active', false, NOW() - INTERVAL '1 hour', NOW() - INTERVAL '1 hour'),
+('cart_002', '+1234567891', 'jane@example.com', 'token_002', '[{"id": "item_2", "quantity": 1, "variant_id": "var_2", "product_id": "prod_2"}]', 'abandoned', true, NOW() - INTERVAL '2 hours', NOW() - INTERVAL '30 minutes'),
+('cart_003', '+1234567892', 'bob@example.com', 'token_003', '[{"id": "item_3", "quantity": 3, "variant_id": "var_3", "product_id": "prod_3"}]', 'abandoned', false, NOW() - INTERVAL '3 hours', NOW() - INTERVAL '2 hours'),
+('cart_004', '+1234567893', 'alice@example.com', 'token_004', '[{"id": "item_4", "quantity": 1, "variant_id": "var_4", "product_id": "prod_4"}]', 'recovered', true, NOW() - INTERVAL '1 day', NOW() - INTERVAL '12 hours'),
+('cart_005', '+1234567894', 'mike@example.com', 'token_005', '[{"id": "item_5", "quantity": 2, "variant_id": "var_5", "product_id": "prod_5"}]', 'abandoned', true, NOW() - INTERVAL '6 hours', NOW() - INTERVAL '4 hours'),
+('cart_006', '+1234567895', 'sarah@example.com', 'token_006', '[{"id": "item_6", "quantity": 1, "variant_id": "var_6", "product_id": "prod_6"}]', 'active', false, NOW() - INTERVAL '30 minutes', NOW() - INTERVAL '30 minutes'),
+('cart_007', '+1234567896', 'tom@example.com', 'token_007', '[{"id": "item_7", "quantity": 4, "variant_id": "var_7", "product_id": "prod_7"}]', 'abandoned', true, NOW() - INTERVAL '8 hours', NOW() - INTERVAL '6 hours'),
+('cart_008', '+1234567897', 'lisa@example.com', 'token_008', '[{"id": "item_8", "quantity": 2, "variant_id": "var_8", "product_id": "prod_8"}]', 'active', false, NOW() - INTERVAL '15 minutes', NOW() - INTERVAL '15 minutes');

@@ -1,0 +1,4 @@
+{
+  "/api/recovery/route": "app/api/recovery/route.js",
+  "/page": "app/page.js"
+}
