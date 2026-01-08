@@ -85,23 +85,31 @@ export class CartRecoveryService {
   async processOrderWebhook(payload: any): Promise<void> {
     const checkoutToken = payload.checkout_token;
     
-    if (!checkoutToken) {
-      console.log('No checkout token in order, skipping');
-      return;
-    }
-
+    // Always save order data to orders table
     const orderData = {
       order_id: payload.id,
       checkout_token: checkoutToken,
       customer_email: payload.email || payload.customer?.email,
-      customer_phone: payload.customer?.phone || payload.billing_address?.phone,
+      customer_phone: this.extractPhoneNumber(payload),
       total_price: parseFloat(payload.total_price || '0'),
       currency: payload.currency || 'USD',
       created_at: payload.created_at || new Date().toISOString(),
       payload: payload
     };
 
-    await supabase.from('orders').upsert(orderData, { onConflict: 'order_id' });
+    const { error: orderError } = await supabase.from('orders').upsert(orderData, { onConflict: 'order_id' });
+    
+    if (orderError) {
+      console.error('Error saving order:', orderError);
+    } else {
+      console.log(`Saved order ${payload.id} to database`);
+    }
+
+    // Only mark cart as completed if there's a checkout token
+    if (!checkoutToken) {
+      console.log('No checkout token in order, order saved but cart not marked as completed');
+      return;
+    }
 
     const { error } = await supabase
       .from('abandoned_carts')
