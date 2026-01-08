@@ -34,6 +34,24 @@ export async function POST(request: NextRequest) {
     }
     
     const orderData = JSON.parse(body)
+
+    // Log detailed order information
+    console.log('Order Details:', {
+      id: orderData.id,
+      order_number: orderData.order_number, 
+      email: orderData.email,
+      total_price: orderData.total_price,
+      line_items: orderData.line_items?.map((item: any) => ({
+        id: item.id,
+        title: item.title,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      customer: orderData.customer,
+      created_at: orderData.created_at,
+      financial_status: orderData.financial_status,
+      fulfillment_status: orderData.fulfillment_status
+    })
     
     // Process all order-related webhooks without verification for testing
     console.log('Processing order webhook:', shopifyTopic)
