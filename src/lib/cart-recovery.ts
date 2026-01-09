@@ -37,12 +37,26 @@ export class CartRecoveryService {
     return 'Customer';
   }
 
-  // Extract main product name from line items
-  private extractMainProductName(lineItems: any[]): string {
+  // Extract multiple product names from line items
+  private extractProductNames(lineItems: any[]): string {
     if (!lineItems || lineItems.length === 0) {
       return 'Product';
     }
-    return lineItems[0]?.title || lineItems[0]?.presentment_title || 'Product';
+    return lineItems.map(item => item.title || item.presentment_title || 'Product').join(', ');
+  }
+
+  // Get all products from database
+  private async getAllProducts(): Promise<string> {
+    const { data: products } = await supabase
+      .from('products')
+      .select('title')
+      .eq('status', 'active');
+    
+    if (!products || products.length === 0) {
+      return 'No products available';
+    }
+    
+    return products.map(p => p.title).join(', ');
   }
 
   // Process checkout webhook and save abandoned cart if it has phone number
@@ -63,6 +77,7 @@ export class CartRecoveryService {
       total_price: parseFloat(payload.total_price || '0'),
       currency: payload.currency || 'USD',
       line_items: payload.line_items || [],
+      abandoned_checkout_url: payload.abandoned_checkout_url,
       created_at: payload.created_at || new Date().toISOString(),
     };
 
@@ -158,6 +173,7 @@ export class CartRecoveryService {
         total_price: parseFloat(payload.total_price || '0'),
         currency: payload.currency || 'USD',
         line_items: payload.line_items || [],
+        abandoned_checkout_url: payload.abandoned_checkout_url,
         created_at: payload.created_at || webhook.created_at,
       };
 
@@ -241,14 +257,18 @@ export class CartRecoveryService {
   private async makeRecoveryCall(cart: any, callLog: any, callType: string, hourField: string): Promise<void> {
     if (!cart.customer_phone) return;
 
-    const productName = this.extractMainProductName(cart.line_items);
+    const productNames = this.extractProductNames(cart.line_items);
+    const allProducts = await this.getAllProducts();
     
     console.log(`Making ${callType} call to ${cart.customer_phone} for cart ${cart.token}`);
 
     const callResult = await vapiService.makeCall(
       cart.customer_phone,
       cart.customer_name || 'Customer',
-      productName
+      cart.customer_email || '',
+      productNames,
+      cart.abandoned_checkout_url || '',
+      allProducts
     );
 
     // Update call log with the result

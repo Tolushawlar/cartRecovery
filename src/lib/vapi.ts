@@ -11,7 +11,10 @@ interface VapiCallRequest {
   assistantOverrides: {
     variableValues: {
       customerName: string;
-      productName: string;
+      customerEmail: string;
+      productNames: string;
+      abandonedCheckoutUrl: string;
+      allProducts: string;
     };
   };
 }
@@ -36,7 +39,10 @@ export class VapiService {
   async makeCall(
     customerPhone: string,
     customerName: string = 'Customer',
-    productName: string = 'Product'
+    customerEmail: string = '',
+    productNames: string = 'Product',
+    abandonedCheckoutUrl: string = '',
+    allProducts: string = ''
   ): Promise<VapiCallResponse> {
     try {
       const callRequest: VapiCallRequest = {
@@ -52,7 +58,10 @@ export class VapiService {
         assistantOverrides: {
           variableValues: {
             customerName,
-            productName,
+            customerEmail,
+            productNames,
+            abandonedCheckoutUrl,
+            allProducts,
           },
         },
       };
